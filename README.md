@@ -148,7 +148,29 @@ http://192.168.56.20/dvwa/login.php
 ```
 
 ---
+## 📸 Proof of Concept (PoC) Visuals
 
+Below is the visual documentation of the Man-in-the-Middle attack execution stages within the lab:
+
+**1. Network Infrastructure Verification (Macvlan)**
+![Docker Verification](capture/verfication_docker_vlan.png)
+*Ensuring the attacker and target are in an isolated subnet using the macvlan driver.*
+
+**2. Successful ARP Poisoning (ARP Spoofing)**
+![ARP Poisoning](capture/ThePoisoning.jpeg)
+*The victim's ARP table before and after the attack. The target's MAC Address (.20) is successfully manipulated to point to the attacker's machine (.10).*
+
+**3. Victim Activity Simulation**
+![Open DVWA](capture/opendvwaubuntu.jpg)
+<br>
+![Victim Login](capture/logindvwa.jpeg)
+*The victim opens the page and authenticates on the DVWA web interface, unaware that their network path has been intercepted.*
+
+**4. Credential Interception (Plaintext Capture)**
+![Expected Output](capture/expected_output.jpg)
+*Bettercap successfully intercepts the HTTP POST request and extracts the username and password in plaintext.*
+
+---
 ## 🔍 Root Cause Analysis — Obstacles Encountered
 
 Full RCA documentation is in [`rca-visualization.md`](rca-visualization.md).
