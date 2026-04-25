@@ -40,7 +40,7 @@ services:
   # Login:  create account on first visit
   # ----------------------------------------------------------
   webgoat:
-    image: webgoat/goat-and-wolf
+    image: webgoat/webgoat:latest
     container_name: webgoat
     networks:
       mitm-net:
