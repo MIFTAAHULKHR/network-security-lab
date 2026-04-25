@@ -21,13 +21,13 @@ A hands-on Man-in-the-Middle (MITM) attack lab built to study network intercepti
 │                  Kali Linux (Host)                  │
 │                  192.168.56.1                       │
 │                                                     │
-│  ┌─────────────────────────────────────────────┐   │
-│  │         Docker macvlan — mitm-net           │   │
-│  │         192.168.56.0/24                     │   │
-│  │                                             │   │
-│  │  [bettercap]    [DVWA]   [WebGoat] [Juice] │   │
-│  │  .56.10         .56.20   .56.21    .56.22  │   │
-│  └─────────────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────────────┐    │
+│  │         Docker macvlan — mitm-net           │    │
+│  │         192.168.56.0/24                     │    │
+│  │                                             │    │
+│  │  [bettercap]    [DVWA]   [WebGoat] [Juice]  │    │
+│  │  .56.10         .56.20   .56.21    .56.22   │    │
+│  └─────────────────────────────────────────────┘    │
 │                    vboxnet0                         │
 └─────────────────────┬───────────────────────────────┘
                       │ Host-Only Network
@@ -126,7 +126,7 @@ Inside bettercap interactive shell:
 ```
 set arp.spoof.fullduplex true
 set arp.spoof.internal true
-set arp.spoof.targets 192.168.56.101,192.168.56.102
+set arp.spoof.targets 192.168.56.101,192.168.56.20
 arp.spoof on
 set net.sniff.verbose true
 set net.sniff.filter port 80
@@ -153,16 +153,11 @@ http://192.168.56.20/dvwa/login.php
 
 Full RCA documentation is in [`docs/rca.md`](docs/rca.md).
 
-| # | Problem | Root Cause | Fix |
-|---|---------|-----------|-----|
-| 1 | No HTTP traffic captured | Docker bridge ≠ vboxnet0 subnet | Switch to macvlan driver |
-| 2 | `Could not detect gateway` warning | Host-Only = isolated, no gateway | Expected behavior, non-blocking |
-| 3 | Wrong target IPs in script | Copy-paste from 192.168.1.x config | Correct to 192.168.56.x |
-| 4 | ARP table Ubuntu not changing | bettercap on host uses vboxnet0 MAC | Move bettercap to macvlan container |
-| 5 | MAC `0a:00:27:00:00:00` kills internet | Host MAC used as spoof source, traffic dropped | macvlan gives container unique MAC |
-| 6 | Only responses captured, no credentials | `net.sniff.verbose` not set | Add verbose + filter config |
-| 7 | 302 → login.php (login fails) | DVWA database not initialized | Run setup.php first |
-| 8 | Duplicate log entries | `fullduplex=true` captures both directions | Expected behavior |
+| # | Technical Obstacle | Root Cause Concept | Resolution |
+|---|--------------------|--------------------|------------|
+| 1 | **Host-to-Container Interception Failure**<br>(Same-Interface Routing Problem) | Running the spoofer directly on the Kali host caused packets to be dropped because VirtualBox (`vboxnet0`) and the Linux kernel block traffic originating from and destined to the same interface. | **Architectural Fix:** Deployed Bettercap inside a **Docker Macvlan** container, granting it a dedicated, isolated MAC address on the network layer. |
+| 2 | **Spoofer Cannot Find Targets**<br>(Silent Network Environment) | Linux containers (like the DVWA target) do not broadcast background traffic. The Bettercap spoofer failed to build an ARP table because the target's MAC address was unknown. | **Active Reconnaissance:** Temporarily activated `net.probe on` to send active discovery packets across the subnet, forcing the hidden container to respond and reveal its MAC address. |
+| 3 | **Missing HTTP POST Data**<br>(Session & Caching Mechanisms) | Initial successful MITM interception only captured `HTTP 302` redirects and `200 OK` responses. The victim's browser was using an active `PHPSESSID` cookie instead of sending a new POST login request. | **Session Invalidation & Deep Sniffing:** Cleared browser cookies/used Incognito mode to force a fresh authentication request, and configured Bettercap with `net.sniff.verbose` and custom regex (`.*password=.*`) to capture the raw payload. |
 
 ---
 
