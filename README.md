@@ -150,25 +150,25 @@ http://192.168.56.20/dvwa/login.php
 ---
 ## 📸 Proof of Concept (PoC) Visuals
 
-Berikut adalah dokumentasi visual dari tahapan eksekusi serangan Man-in-the-Middle di dalam lab:
+Below is the visual documentation of the Man-in-the-Middle attack execution stages within the lab:
 
-**1. Verifikasi Infrastruktur Jaringan (Macvlan)**
-![Verifikasi Docker](capture/verfication_docker_vlan.png)
-*Memastikan attacker dan target berada dalam satu subnet terisolasi dengan driver macvlan.*
+**1. Network Infrastructure Verification (Macvlan)**
+![Docker Verification](capture/verfication_docker_vlan.png)
+*Ensuring the attacker and target are in an isolated subnet using the macvlan driver.*
 
-**2. Keberhasilan Racun ARP (ARP Spoofing)**
+**2. Successful ARP Poisoning (ARP Spoofing)**
 ![ARP Poisoning](capture/ThePoisoning.jpeg)
-*Tabel ARP korban sebelum dan sesudah serangan. MAC Address target (.20) berhasil dimanipulasi agar mengarah ke mesin penyerang (.10).*
+*The victim's ARP table before and after the attack. The target's MAC Address (.20) is successfully manipulated to point to the attacker's machine (.10).*
 
-**3. Simulasi Aktivitas Korban**
-![Buka DVWA](capture/opendvwaubuntu.jpg)
+**3. Victim Activity Simulation**
+![Open DVWA](capture/opendvwaubuntu.jpg)
 <br>
-![Login Korban](capture/logindvwa.jpeg)
-*Korban membuka halaman dan melakukan otentikasi pada web DVWA tanpa menyadari jalur jaringannya telah disadap.*
+![Victim Login](capture/logindvwa.jpeg)
+*The victim opens the page and authenticates on the DVWA web interface, unaware that their network path has been intercepted.*
 
-**4. Intersepsi Kredensial (Plaintext Capture)**
+**4. Credential Interception (Plaintext Capture)**
 ![Expected Output](capture/expected_output.jpg)
-*Bettercap berhasil mencegat HTTP POST request dan mengekstrak username serta password dalam bentuk teks terang.*
+*Bettercap successfully intercepts the HTTP POST request and extracts the username and password in plaintext.*
 
 ---
 ## 🔍 Root Cause Analysis — Obstacles Encountered
