@@ -2,7 +2,7 @@
 
 Dokumen ini mencatat masalah arsitektural dan operasional utama yang dipecahkan selama pembangunan lab simulasi MITM (*Man-in-the-Middle*).
 
-## 1. Visualisasi Solusi Jaringan (Host vs Macvlan)
+## Visualisasi Solusi Jaringan (Host vs Macvlan)
 
 Di bawah ini adalah diagram arsitektur yang menunjukkan mengapa *spoofer* yang dijalankan di *Host* gagal, dan mengapa Docker Macvlan berhasil menjadi solusi.
 
