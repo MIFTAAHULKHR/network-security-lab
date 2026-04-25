@@ -153,21 +153,21 @@ http://192.168.56.20/dvwa/login.php
 Berikut adalah dokumentasi visual dari tahapan eksekusi serangan Man-in-the-Middle di dalam lab:
 
 **1. Verifikasi Infrastruktur Jaringan (Macvlan)**
-![Verifikasi Docker](captures/verfication%20docker%20vlan.png)
+![Verifikasi Docker](capture/verfication%20docker%20vlan.png)
 *Memastikan attacker dan target berada dalam satu subnet terisolasi dengan driver macvlan.*
 
 **2. Keberhasilan Racun ARP (ARP Spoofing)**
-![ARP Poisoning](captures/ThePoisoning.jpeg)
+![ARP Poisoning](capture/ThePoisoning.jpeg)
 *Tabel ARP korban sebelum dan sesudah serangan. MAC Address target (.20) berhasil dimanipulasi agar mengarah ke mesin penyerang (.10).*
 
 **3. Simulasi Aktivitas Korban**
-![Buka DVWA](captures/opendvwaubuntu.jpg)
+![Buka DVWA](capture/opendvwaubuntu.jpg)
 <br>
-![Login Korban](captures/logindvwa.jpeg)
+![Login Korban](capture/logindvwa.jpeg)
 *Korban membuka halaman dan melakukan otentikasi pada web DVWA tanpa menyadari jalur jaringannya telah disadap.*
 
 **4. Intersepsi Kredensial (Plaintext Capture)**
-![Expected Output](captures/expected_output.jpg)
+![Expected Output](capture/expected_output.jpg)
 *Bettercap berhasil mencegat HTTP POST request dan mengekstrak username serta password dalam bentuk teks terang.*
 ---
 ## 🔍 Root Cause Analysis — Obstacles Encountered
